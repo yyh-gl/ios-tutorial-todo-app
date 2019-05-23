@@ -8,30 +8,43 @@
 
 import UIKit
 
-class ViewController: UIViewController { 
+struct Task {
+    let name: String
+}
+
+class ViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView! {
         didSet {
             tableView.dataSource = self
         }
     }
     
-    private var tasks = [String]()
+    private var tasks = [Task]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+    }
+    
+    @IBAction func onAdd() {
+        let alert = UIAlertController(title: "", message: "Input new task name", preferredStyle: .alert)
+        alert.addTextField { (textField) in }
+        alert.addAction(
+            UIAlertAction(title: "OK",
+                          style: .default,
+                          handler: { (_) in
+                            let textField = alert.textFields?.first
+                            if let text = textField?.text {
+                                self.tasks.append(Task(name: text))
+                                self.tableView.reloadData()
+                            }
+            })
+        )
         
-        tasks = [
-            "abc", "efg", "hoge",
-            "hoge", "hoge", "hoge",
-            "hoge", "hoge", "hoge",
-            "hoge", "hoge", "hoge",
-            "hoge", "hoge", "hoge",
-            "hoge", "hoge", "hoge",
-            "hoge", "hoge", "hoge",
-            "ほんだ"
-        ]
+        present(alert, animated: true, completion: nil)
     }
 }
+
+
 
 extension ViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView,
@@ -42,7 +55,7 @@ extension ViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView,
                    cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell()
-        cell.textLabel?.text = tasks[indexPath.row]
+        cell.textLabel?.text = tasks[indexPath.row].name
         return cell
     }
 }
